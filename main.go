@@ -2,17 +2,19 @@ package main
 
 import (
 	//"encoding/json"
-	//"fmt"
 	//"github.com/gorilla/mux"
-	"utils"
+	//"utils"
 	//"log"
 	//"net/http"
 	//"strings"
 	//"text/template"
 	//"strings"
-	"time"
 	//"bytes"
 	"fmt"
+	"github.com/gorilla/mux"
+	"html"
+	"log"
+	"net/http"
 	"pwdGenerator"
 )
 
@@ -20,12 +22,17 @@ const maxPwds = 20
 
 func main() {
 
-	defer utils.Track(time.Now())
+	router := mux.NewRouter().StrictSlash(true)
+	router.HandleFunc("/passwords", Index)
+	log.Println("Random Passwor Generator starting...")
+	log.Fatal(http.ListenAndServe(":8080", router))
+
+}
+
+func Index(w http.ResponseWriter, r *http.Request) {
+
 	fmt.Print("sss")
 	pwdGen := pwdGenerator.NewPwdGenerator()
 	pwdGenerator.GenerateManyPasswords(*pwdGen, maxPwds)
-	//for _ ,v:=range list {
-	//	fmt.Println(v)
-	//}
-
+	fmt.Fprintf(w, "Hello, %q", html.EscapeString(r.URL.Path))
 }
