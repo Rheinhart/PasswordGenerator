@@ -8,9 +8,22 @@ import (
 func TestCharBytes_RandomGetChars(t *testing.T) {
 
 	many := 10
+
 	out := mixedVowel.RandomGetChars(many)
 	if len(out) != many {
-		t.Log("get number wrong!")
+		t.Log("get mixedVowel wrong numbers!")
+		t.Fail()
+	}
+
+	out = specChar.RandomGetChars(many)
+	if len(out) != many {
+		t.Log("get special wrong numbers!")
+		t.Fail()
+	}
+
+	out = digit.RandomGetChars(many)
+	if len(out) != many {
+		t.Log("get wrong digit numbers!!")
 		t.Fail()
 	}
 }

@@ -2,8 +2,7 @@ package pwdGenerator
 
 import (
 	"bytes"
-	"encoding/json"
-	"fmt"
+	"log"
 	"utils"
 )
 
@@ -34,15 +33,33 @@ func (charSet charBytes) RandomGetChars(num int) (out charBytes) {
 	return
 }
 
+type PwdQuery struct {
+	MaxPwds    int `json: "limit"`
+	MinLength  int `json: "length"`
+	NumDigit   int `json: "digits"`
+	NumSpecial int `json: "specials"`
+}
+
+type PwdPair struct {
+	MappingRules map[byte]byte `json: "rules"`
+	OldPassword  string        `json: "oldPassword"`
+	NewPassword  string        `json: "nldPassword"`
+}
+
 type passwordGenerator struct {
-	name      int
-	passwords []string
+	PwdQuery  `json: "query"`
+	Passwords []string `json: "passwords"`
 }
 
 type PwdGenerable interface {
-	Generate(min int) string
+	Generate() string
 	Map(mapping map[byte]byte, old string) string
 	CreateVowelDigitRandomMapping() map[byte]byte
+	GetPasswords() []string
+}
+
+func (p *passwordGenerator) GetPasswords() []string {
+	return p.Passwords
 }
 
 //pwd generator factory
@@ -59,86 +76,62 @@ func (p *passwordGenerator) CreateVowelDigitRandomMapping() map[byte]byte {
 		mapping[v] = rDigits[i]
 	}
 
-	fmt.Printf("%c", mapping)
+	//fmt.Printf("%c\n", mapping)
 	return mapping
 }
 
-func (p *passwordGenerator) Map(mapping map[byte]byte, old string, on bool) string {
+func (p *passwordGenerator) Map(rules map[byte]byte, old string) string {
 
-	if on {
-		var buff bytes.Buffer
-		for i := 0; i < len(old); i++ {
-			if v, ok := mapping[byte(old[i])]; ok {
-				buff.WriteByte(v)
-			} else {
-				buff.WriteByte(old[i])
-			}
+	var buff bytes.Buffer
+	for i := 0; i < len(old); i++ {
+		if v, ok := rules[byte(old[i])]; ok {
+			buff.WriteByte(v)
+		} else {
+			buff.WriteByte(old[i])
 		}
-		new := buff.String()
-		return new
-	} else {
-		return old
 	}
+
+	return buff.String()
 }
 
-func (p *passwordGenerator) Generate(min int) (pwd string) {
+func (p *passwordGenerator) Generate(q PwdQuery) (pwd string) {
 
-	minLength := min
+	p.PwdQuery = q
 	distance := 5
-	length := utils.Random(minLength, minLength+distance)
-	numDigit := 2
-	numSpec := 2
-	numRest := length - numSpec - numDigit
 
-	if numDigit > minLength || numSpec > minLength || minLength-numSpec-numDigit <= 0 {
-		panic("error!")
-	}
+	length := utils.Random(p.MinLength, p.MinLength+distance)
+	restLegnth := length - p.NumSpecial - p.NumDigit
 
 	var letters, digits, specials charBytes
 	var allChars bytes.Buffer
 
-	letters = mixLetter.RandomGetChars(numRest)
+	letters = mixLetter.RandomGetChars(restLegnth)
 	if _, err := allChars.Write(letters); err != nil {
-		fmt.Println("Buffer Writing Error: %s\n", err)
+		log.Println("Buffer Writing Error: %s\n", err)
 	}
 
-	digits = digit.RandomGetChars(numDigit)
+	digits = digit.RandomGetChars(p.NumDigit)
 	if _, err := allChars.Write(digits); err != nil {
-		fmt.Println("Buffer Writing Error: %s\n", err)
+		log.Println("Buffer Writing Error: %s\n", err)
 	}
 
-	specials = specChar.RandomGetChars(numSpec)
+	specials = specChar.RandomGetChars(p.NumSpecial)
 	if _, err := allChars.Write(specials); err != nil {
-		fmt.Println("Buffer Writing Error: %s\n", err)
+		log.Println("Buffer Writing Error: %s\n", err)
 	}
 
 	pwd = string(utils.Shuffle(allChars.Bytes()))
 
-	//fmt.Printf("%s\n", pwd)
-
 	return
 }
 
-func GenerateManyPasswords(gen passwordGenerator, num int) {
+func (p *passwordGenerator) GenerateManyPasswords(q PwdQuery) {
 
 	var pwd string
-	mapping := gen.CreateVowelDigitRandomMapping()
 
-	for i := 0; i < num; i++ {
-		pwd = gen.Generate(8)
-		fmt.Printf("%s\n", pwd)
-
-		pwd = gen.Map(mapping, pwd, true)
-		fmt.Printf("%s\n", pwd)
-
-		gen.passwords = append(gen.passwords, pwd)
+	for i := 0; i < q.MaxPwds; i++ {
+		pwd = p.Generate(q)
+		p.Passwords = append(p.Passwords, pwd)
 	}
-
-	jsList, _ := json.MarshalIndent(gen.passwords, "", " ")
-
-	//fmt.Printf("%s\n",string(jsList))
-
-	var f interface{}
-	json.Unmarshal(jsList, &f)
 
 }

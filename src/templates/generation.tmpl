@@ -1,0 +1,29 @@
+{{define "generation"}}
+<body>
+<h1>Random Password Generator</h1>
+<hr/>
+<br/>
+<form action="/passwords" method="get">
+    minimum length: <input type="text" value="8" name="length"> <br/><br/>
+
+    number of special: <input type="text" value="0" name="specials"> <br/><br/>
+
+    number of digit: <input type="text" value="0" name="digits"> <br/><br/>
+
+    number of passwords to generate: <select name="limits">
+    <option selected="selected"> 15 </option>
+    <script language="javascript" type="text/javascript">
+        for(var d=1;d<=50;d++)
+        {
+            document.write("<option>"+d+"</option>");
+        }
+    </script>
+</select><br/><br/>
+    <input type="submit" value="Generate"> <br/>
+</form>
+<textarea name="Generated Passwords" rows="20" cols="50">
+{{range .Passwords}}
+{{.}}
+{{end}}
+</textarea>
+{{end}}

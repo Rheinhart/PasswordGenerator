@@ -1,0 +1,18 @@
+{{define "mapping"}}
+<br/><br/>
+<form action="/passwords/mapping" method="post">
+    Replace vowel to random number: <input type="text" name="password">
+    <input type="submit" value="Replace"> <br/>
+</form>
+<table>
+<tr>
+    <td>
+    before: {{.OldPassword}}
+    </td></tr>
+    <tr>
+    <td>after: {{.NewPassword}}</td>
+    </tr>
+</table>
+</body>
+</html>
+{{end}}
