@@ -1,0 +1,14 @@
+
+{
+  "name": "Password Generator API Document",
+  "version": "0.1.0",
+  "description": "A random password generator",
+  "apidoc": {
+    "title": "Random Password Generator API",
+    "url": "http://localhost:8080"
+  },
+  "template": {
+  "withCompare": false,
+  "withGenerator": true
+  }
+}

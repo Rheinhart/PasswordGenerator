@@ -5,6 +5,7 @@ import (
 	"testing"
 )
 
+//test get random chars from charset
 func TestCharBytes_RandomGetChars(t *testing.T) {
 
 	many := 10
@@ -28,13 +29,14 @@ func TestCharBytes_RandomGetChars(t *testing.T) {
 	}
 }
 
+//test create
 func TestNewPwdGenerator(t *testing.T) {
 
 	p := NewPwdGenerator()
 	q := &passwordGenerator{}
 	v := reflect.TypeOf(p)
 	if v == reflect.TypeOf(q) {
-		t.Log("Right right type")
+		t.Log("Return right type")
 	} else {
 		t.Log("Return wrong type")
 		t.Fail()
