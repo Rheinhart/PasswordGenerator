@@ -53,17 +53,17 @@ type JsStatus struct {
 
 // PwdPair post method data from client
 type PwdPair struct {
-	JsStatus     				`json:"status"`
-	MappingRules map[byte]byte  `json:"-"` // random vowel to digit
-	OldPassword  string         `json:"oldPassword"`
-	NewPassword  string         `json:"newPassword"`
+	JsStatus     `json:"status"`
+	MappingRules map[byte]byte `json:"-"` // random vowel to digit
+	OldPassword  string        `json:"oldPassword"`
+	NewPassword  string        `json:"newPassword"`
 }
 
 // passwordGenerator to generate one or many random passwords
 type passwordGenerator struct {
-	JsStatus  			`json:"status"`
-	Query     PwdQuery  `json:"query"`
-	Passwords []string  `json:"passwords"`
+	JsStatus  `json:"status"`
+	Query     PwdQuery `json:"query"`
+	Passwords []string `json:"passwords"`
 }
 
 // PwdGenerable interface

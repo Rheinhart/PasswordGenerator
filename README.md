@@ -1,4 +1,4 @@
-#Requirement Document - Password Generator
+#Password Generator
 
 ## Restful API Test
 ### Build:
