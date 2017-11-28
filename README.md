@@ -6,7 +6,7 @@ apidoc -i PasswordGenerator/
 ## Restful API Test
 
 ### Set GOPATH:
-expor GOPATH = .../Password Generator
+export GOPATH = .../Password Generator
 ### Build:
 go build main.go
 ### Run Server:
