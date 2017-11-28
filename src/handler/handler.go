@@ -2,7 +2,6 @@ package handler
 
 import (
 	"encoding/json"
-	"fmt"
 	"html/template"
 	"log"
 	"net/http"
@@ -44,7 +43,7 @@ func IndexHandler(w http.ResponseWriter, req *http.Request) {
  * @apiParam {number} limits how many passwords to be generated
 
  * @apiExample Example usage
- * curl -i http://localhost:8080/passwords?length=8&specials=2&digits=2&limits=10
+ * curl -i "http://localhost:8080/passwords?length=8&specials=2&digits=2&limits=10"
 
  * @apiSuccess 200 ok
  * @apiSuccessExample {json} Success-Response:
@@ -154,7 +153,7 @@ func PasswordHandler(w http.ResponseWriter, req *http.Request) {
 
 
  * @apiExample Example usage
- * curl -i http://localhost:8080/passwords/mapping?password=@$afGwqwe
+ * curl -i "http://localhost:8080/passwords/mapping?password=@$afGwqwe"
 
  * @apiSuccess 200 ok
  * @apiSuccessExample {json} Success-Response:
@@ -197,7 +196,7 @@ func VowelMappingHandler(w http.ResponseWriter, req *http.Request) {
 		g := templates.Lookup("generation")
 		err := g.ExecuteTemplate(w, "generation", nil)
 		if err != nil {
-			fmt.Fprintf(w, "%s\n", err)
+			log.Printf("%s\n", err)
 		}
 		m := templates.Lookup("mapping")
 		m.ExecuteTemplate(w, "mapping", pp)

@@ -12,7 +12,7 @@ func main() {
 	http.HandleFunc("/passwords", handler.PasswordHandler)
 	http.HandleFunc("/passwords/mapping", handler.VowelMappingHandler)
 
-	log.Println("Random Passwor Generator starting...")
+	log.Println("Passwor Generator Server starting...")
 	log.Fatal(http.ListenAndServe(":8080", nil))
 
 }

@@ -15,6 +15,7 @@ type CharBytes interface {
 	RandomGetChars(num int) (out charBytes)
 }
 
+//Predefined Character Set
 var (
 	mixLetter      = charBytes("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz")
 	mixedVowel     = charBytes("AEIOUaeiou")
@@ -44,6 +45,7 @@ type PwdQuery struct {
 	NumSpecial int `json:"specials"`
 }
 
+// JsStatus json error message
 type JsStatus struct {
 	Code    int    `json:"code"`
 	Message string `json:"message"`
@@ -51,19 +53,20 @@ type JsStatus struct {
 
 // PwdPair post method data from client
 type PwdPair struct {
-	JsStatus     `json:"status"`
-	MappingRules map[byte]byte `json:"-"` // random vowel to digit
-	OldPassword  string        `json:"oldPassword"`
-	NewPassword  string        `json:"newPassword"`
+	JsStatus     				`json:"status"`
+	MappingRules map[byte]byte  `json:"-"` // random vowel to digit
+	OldPassword  string         `json:"oldPassword"`
+	NewPassword  string         `json:"newPassword"`
 }
 
 // passwordGenerator to generate one or many random passwords
 type passwordGenerator struct {
-	JsStatus  `json:"status"`
-	Query     PwdQuery `json:"query"`
-	Passwords []string `json:"passwords"`
+	JsStatus  			`json:"status"`
+	Query     PwdQuery  `json:"query"`
+	Passwords []string  `json:"passwords"`
 }
 
+// PwdGenerable interface
 type PwdGenerable interface {
 	Generate() string
 	Map(mapping map[byte]byte, old string) string
@@ -106,15 +109,15 @@ func (p *passwordGenerator) Map(rules map[byte]byte, old string) string {
 // Generate generate one password
 func (p *passwordGenerator) Generate() (pwd string) {
 
-	distance := 5
+	distance := 5 //maximum length = minmum length + distance
 
-	length := utils.Random(p.Query.MinLength, p.Query.MinLength+distance)
-	restLegnth := length - p.Query.NumSpecial - p.Query.NumDigit
+	length := utils.Random(p.Query.MinLength, p.Query.MinLength+distance) // random get the password length bwtween min and max
+	rest := length - p.Query.NumSpecial - p.Query.NumDigit
 
 	var letters, digits, specials charBytes
 	var allChars bytes.Buffer
 
-	letters = mixLetter.RandomGetChars(restLegnth)
+	letters = mixLetter.RandomGetChars(rest)
 	if _, err := allChars.Write(letters); err != nil {
 		log.Println("Buffer Writing Error: %s\n", err)
 	}
@@ -129,7 +132,7 @@ func (p *passwordGenerator) Generate() (pwd string) {
 		log.Println("Buffer Writing Error: %s\n", err)
 	}
 
-	pwd = string(utils.Shuffle(allChars.Bytes()))
+	pwd = string(utils.Shuffle(allChars.Bytes())) // shuffle all characters in the password
 
 	return
 }
@@ -150,26 +153,21 @@ func (p *passwordGenerator) GenerateManyPasswords() {
 func (q PwdQuery) CheckErrors() (bool, error) {
 
 	if q.MinLength <= 0 {
-
 		err := errors.New("Input Error: length can not smaller than 0!")
 		return false, err
 	}
-
 	if q.NumSpecial < 0 {
 		err := errors.New("Input Error: special number should not smaller than 0!")
 		return false, err
 	}
-
 	if q.NumDigit < 0 {
 		err := errors.New("Input Error: digit number should not smaller than 0!")
 		return false, err
 	}
-
 	if q.NumDigit > q.MinLength {
 		err := errors.New("Input Error: digit number should not larger than length!")
 		return false, err
 	}
-
 	if q.NumSpecial > q.MinLength {
 		err := errors.New("Input Error: special number should not larger than length!")
 		return false, err

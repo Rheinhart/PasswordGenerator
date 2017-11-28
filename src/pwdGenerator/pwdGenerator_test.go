@@ -51,6 +51,14 @@ func TestPasswordGenerator_Map(t *testing.T) {
 
 }
 
+func TestPasswordGenerator_GenerateManyPasswords(t *testing.T) {
+
+}
+
+func TestPwdQuery_CheckErrors(t *testing.T) {
+
+}
+
 func TestPasswordGenerator_CreateVowelDigitRandomMapping(t *testing.T) {
 
 }
